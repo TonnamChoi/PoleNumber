@@ -7,14 +7,7 @@ export async function extractWithGemini({
   base64Data,
   mimeType,
 }: ExtractParams): Promise<ExtractionResult> {
-  const ai = new GoogleGenAI({
-    apiKey,
-    httpOptions: {
-      headers: {
-        "User-Agent": "aistudio-build",
-      },
-    },
-  });
+  const ai = new GoogleGenAI({ apiKey });
 
   const imagePart = {
     inlineData: {

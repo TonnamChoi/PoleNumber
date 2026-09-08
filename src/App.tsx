@@ -171,7 +171,7 @@ export default function App() {
           <div className="w-7 h-7 bg-blue-600 rounded-lg flex items-center justify-center">
             <Cpu className="w-4 h-4 text-white" />
           </div>
-          <h1 className="text-sm font-bold text-gray-900">전주번호찰 선로 정보 추출기</h1>
+          <h1 className="text-sm font-bold text-gray-900">AI 전주번호찰 선로 정보 추출기</h1>
         </div>
         <button
           onClick={() => setIsSettingsOpen(true)}
