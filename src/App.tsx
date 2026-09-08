@@ -9,7 +9,7 @@ import { PoleImage } from "./types";
 import { AppSettings, loadSettings, saveSettings } from "./lib/settings";
 import {
   Sparkles, ShieldCheck, Zap, Server,
-  Play, Trash2, Layers, Cpu, Loader2, Settings
+  Play, Trash2, Layers, Cpu, Loader2, Settings, ExternalLink
 } from "lucide-react";
 
 export default function App() {
@@ -173,13 +173,24 @@ export default function App() {
           </div>
           <h1 className="text-sm font-bold text-gray-900">AI 전주번호찰 선로 정보 추출기</h1>
         </div>
-        <button
-          onClick={() => setIsSettingsOpen(true)}
-          className="p-2 text-gray-500 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition-colors"
-          title="AI 설정"
-        >
-          <Settings className="w-5 h-5" />
-        </button>
+        <div className="flex items-center gap-1">
+          <a
+            href="https://online.kepco.co.kr/EWM090D00"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="hidden sm:flex items-center gap-1 px-3 py-1.5 text-xs font-semibold text-gray-500 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition-colors"
+          >
+            한전 전산화번호검색
+            <ExternalLink className="w-3.5 h-3.5" />
+          </a>
+          <button
+            onClick={() => setIsSettingsOpen(true)}
+            className="p-2 text-gray-500 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition-colors"
+            title="AI 설정"
+          >
+            <Settings className="w-5 h-5" />
+          </button>
+        </div>
       </header>
 
       {/* Main Workspace Layout */}
