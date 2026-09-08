@@ -1,12 +1,13 @@
 import React, { useState, useRef } from "react";
-import { Upload, Image as ImageIcon, Sparkles, AlertCircle } from "lucide-react";
+import { Upload, Image as ImageIcon, Sparkles, AlertCircle, RefreshCw } from "lucide-react";
 import { PoleImage } from "../types";
 
 interface DropZoneProps {
   onImagesAdded: (images: PoleImage[]) => void;
+  previewImage?: PoleImage | null;
 }
 
-export default function DropZone({ onImagesAdded }: DropZoneProps) {
+export default function DropZone({ onImagesAdded, previewImage }: DropZoneProps) {
   const [isDragActive, setIsDragActive] = useState(false);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -104,39 +105,74 @@ export default function DropZone({ onImagesAdded }: DropZoneProps) {
 
   return (
     <div className="w-full">
-      <div
-        id="dropzone-container"
-        onDragEnter={handleDrag}
-        onDragOver={handleDrag}
-        onDragLeave={handleDrag}
-        onDrop={handleDrop}
-        onClick={onButtonClick}
-        className={`w-full h-40 border-2 border-dashed rounded-lg flex flex-col items-center justify-center p-4 text-center cursor-pointer transition-all duration-200 ${
-          isDragActive
-            ? "border-blue-500 bg-blue-50/50"
-            : "border-gray-300 hover:border-blue-400 bg-gray-50/60 hover:bg-white"
-        }`}
-      >
-        <input
-          ref={fileInputRef}
-          type="file"
-          className="hidden"
-          multiple
-          accept="image/*"
-          onChange={handleFileChange}
-        />
-        
-        <div className="p-2.5 bg-white rounded border border-gray-200 shadow-xs mb-2 text-blue-600">
-          <Upload className="w-5 h-5" />
+      <input
+        ref={fileInputRef}
+        type="file"
+        className="hidden"
+        multiple
+        accept="image/*"
+        onChange={handleFileChange}
+      />
+
+      {previewImage ? (
+        <div
+          id="dropzone-container"
+          onDragEnter={handleDrag}
+          onDragOver={handleDrag}
+          onDragLeave={handleDrag}
+          onDrop={handleDrop}
+          className={`w-full border-2 border-dashed rounded-lg p-3 flex items-center gap-3 transition-all duration-200 ${
+            isDragActive ? "border-blue-500 bg-blue-50/50" : "border-gray-300 bg-gray-50/60"
+          }`}
+        >
+          <img
+            src={previewImage.url}
+            alt={previewImage.name}
+            className="w-16 h-20 object-cover rounded border border-gray-200 shrink-0 bg-white"
+            referrerPolicy="no-referrer"
+          />
+          <div className="min-w-0 flex-1">
+            <p className="text-gray-800 font-bold text-xs truncate" title={previewImage.name}>
+              {previewImage.name}
+            </p>
+            <p className="text-gray-400 text-[11px] mt-0.5">
+              드래그 앤 드롭으로도 다른 이미지를 추가할 수 있습니다.
+            </p>
+          </div>
+          <button
+            onClick={onButtonClick}
+            className="shrink-0 inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-bold bg-white hover:bg-gray-50 border border-gray-300 text-gray-700 rounded-lg transition-colors"
+          >
+            <RefreshCw className="w-3.5 h-3.5" />
+            변경
+          </button>
         </div>
-        
-        <p className="text-gray-800 font-bold text-xs md:text-sm mb-0.5">
-          여기에 전주번호찰 이미지들을 드래그하여 드롭하거나 클릭하여 업로드
-        </p>
-        <p className="text-gray-400 text-[11px]">
-          여러 장의 이미지를 동시에 업로드할 수 있습니다. (PNG, JPG, JPEG 지원)
-        </p>
-      </div>
+      ) : (
+        <div
+          id="dropzone-container"
+          onDragEnter={handleDrag}
+          onDragOver={handleDrag}
+          onDragLeave={handleDrag}
+          onDrop={handleDrop}
+          onClick={onButtonClick}
+          className={`w-full h-40 border-2 border-dashed rounded-lg flex flex-col items-center justify-center p-4 text-center cursor-pointer transition-all duration-200 ${
+            isDragActive
+              ? "border-blue-500 bg-blue-50/50"
+              : "border-gray-300 hover:border-blue-400 bg-gray-50/60 hover:bg-white"
+          }`}
+        >
+          <div className="p-2.5 bg-white rounded border border-gray-200 shadow-xs mb-2 text-blue-600">
+            <Upload className="w-5 h-5" />
+          </div>
+
+          <p className="text-gray-800 font-bold text-xs md:text-sm mb-0.5">
+            여기에 전주번호찰 이미지들을 드래그하여 드롭하거나 클릭하여 업로드
+          </p>
+          <p className="text-gray-400 text-[11px]">
+            여러 장의 이미지를 동시에 업로드할 수 있습니다. (PNG, JPG, JPEG 지원)
+          </p>
+        </div>
+      )}
 
       {errorMsg && (
         <div className="mt-3 flex items-center gap-2 p-3 bg-red-50 text-red-700 rounded-lg text-sm border border-red-100">

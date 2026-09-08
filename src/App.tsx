@@ -26,8 +26,8 @@ export default function App() {
   // Add uploaded pole images and immediately start analyzing each one
   const handleImagesAdded = (newImages: PoleImage[]) => {
     setPoles((prev) => [...prev, ...newImages]);
-    if (!selectedId && newImages.length > 0) {
-      setSelectedId(newImages[0].id);
+    if (newImages.length > 0) {
+      setSelectedId(newImages[newImages.length - 1].id);
     }
     newImages.forEach((image) => {
       analyzePole(image);
@@ -205,9 +205,9 @@ export default function App() {
         <div className="bg-white border border-gray-200 rounded-xl p-4">
           <div className="mb-3">
             <h2 className="font-bold text-gray-800 text-sm">이미지 업로드</h2>
-            <p className="text-xs text-gray-400 mt-0.5">촬영된 전주번호찰 이미지를 드래그 앤 드롭하거나 선택하세요. 업로드하면 바로 분석이 시작됩니다.</p>
+            <p className="text-xs text-gray-400 mt-0.5">전주번호찰 이미지를 선택하거나 드롭 하세요</p>
           </div>
-          <DropZone onImagesAdded={handleImagesAdded} />
+          <DropZone onImagesAdded={handleImagesAdded} previewImage={selectedPole} />
         </div>
 
         {/* Action bar */}
@@ -262,29 +262,18 @@ export default function App() {
           </div>
         )}
 
-        {/* Step 2: List + Detail */}
+        {/* Detail: right below upload */}
         {totalCount > 0 && (
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-5">
-            <div className="lg:col-span-5">
-              <PoleList
-                poles={poles}
-                selectedId={selectedId}
-                onSelect={setSelectedId}
-                onRemove={handleRemovePole}
-                onAnalyze={handleAnalyzePole}
-              />
-            </div>
-            <div className="lg:col-span-7">
-              <PoleDetail
-                pole={selectedPole}
-                onAnalyze={handleAnalyzePole}
-                onUpdateInfo={handleUpdatePoleInfo}
-              />
-            </div>
+          <div className="w-full">
+            <PoleDetail
+              pole={selectedPole}
+              onAnalyze={handleAnalyzePole}
+              onUpdateInfo={handleUpdatePoleInfo}
+            />
           </div>
         )}
 
-        {/* Step 3: Summary */}
+        {/* Summary */}
         {totalCount > 0 && (
           <div className="w-full">
             <SummaryTable
@@ -293,6 +282,19 @@ export default function App() {
               onSelect={setSelectedId}
               onRemove={handleRemovePole}
               onClearAll={handleClearAll}
+            />
+          </div>
+        )}
+
+        {/* List: pushed to the very bottom */}
+        {totalCount > 0 && (
+          <div className="w-full">
+            <PoleList
+              poles={poles}
+              selectedId={selectedId}
+              onSelect={setSelectedId}
+              onRemove={handleRemovePole}
+              onAnalyze={handleAnalyzePole}
             />
           </div>
         )}
