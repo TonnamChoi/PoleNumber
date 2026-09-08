@@ -23,10 +23,3 @@ export interface PoleImage {
   isSample: boolean;
   uploadedAt: string;
 }
-
-export interface SamplePlate {
-  id: string;
-  title: string;
-  description: string;
-  svgMarkup: string;
-}

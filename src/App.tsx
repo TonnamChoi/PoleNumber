@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import DropZone from "./components/DropZone";
-import SampleSelector from "./components/SampleSelector";
 import PoleList from "./components/PoleList";
 import PoleDetail from "./components/PoleDetail";
 import SummaryTable from "./components/SummaryTable";
@@ -24,12 +23,15 @@ export default function App() {
     saveSettings(next);
   };
 
-  // Add uploaded or sample pole images
+  // Add uploaded pole images and immediately start analyzing each one
   const handleImagesAdded = (newImages: PoleImage[]) => {
     setPoles((prev) => [...prev, ...newImages]);
     if (!selectedId && newImages.length > 0) {
       setSelectedId(newImages[0].id);
     }
+    newImages.forEach((image) => {
+      analyzePole(image);
+    });
   };
 
   // Remove a single pole image from list
@@ -57,16 +59,12 @@ export default function App() {
   };
 
   // Analyze a single pole image using server endpoint
-  const handleAnalyzePole = async (id: string) => {
-    // Locate the pole
-    const targetPole = poles.find((p) => p.id === id);
-    if (!targetPole) return;
-
+  const analyzePole = async (targetPole: PoleImage) => {
     const apiKey = settings.keys[settings.selectedProvider];
     if (!apiKey) {
       setPoles((prev) =>
         prev.map((p) =>
-          p.id === id
+          p.id === targetPole.id
             ? { ...p, status: "failed", error: "설정에서 API 키를 먼저 입력하세요." }
             : p
         )
@@ -78,7 +76,7 @@ export default function App() {
     // Set processing state
     setPoles((prev) =>
       prev.map((p) =>
-        p.id === id
+        p.id === targetPole.id
           ? { ...p, status: "processing", error: null }
           : p
       )
@@ -108,7 +106,7 @@ export default function App() {
       // Update with extracted data
       setPoles((prev) =>
         prev.map((p) =>
-          p.id === id
+          p.id === targetPole.id
             ? {
                 ...p,
                 status: "completed",
@@ -123,10 +121,10 @@ export default function App() {
         )
       );
     } catch (err: any) {
-      console.error("Analysis failed for pole id", id, err);
+      console.error("Analysis failed for pole id", targetPole.id, err);
       setPoles((prev) =>
         prev.map((p) =>
-          p.id === id
+          p.id === targetPole.id
             ? {
                 ...p,
                 status: "failed",
@@ -136,6 +134,13 @@ export default function App() {
         )
       );
     }
+  };
+
+  // Look up a pole by id and analyze it (used by retry buttons)
+  const handleAnalyzePole = async (id: string) => {
+    const targetPole = poles.find((p) => p.id === id);
+    if (!targetPole) return;
+    await analyzePole(targetPole);
   };
 
   // Analyze all poles that are currently in 'idle' or 'failed' status
@@ -196,23 +201,13 @@ export default function App() {
       {/* Main Workspace Layout */}
       <main className="flex-1 max-w-7xl w-full mx-auto p-4 md:p-6 space-y-5">
 
-        {/* Step 1: Upload and Sample selection */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 items-stretch">
-          <div className="lg:col-span-5 bg-white border border-gray-200 rounded-xl p-4 flex flex-col justify-between">
-            <div className="mb-3">
-              <h2 className="font-bold text-gray-800 text-sm">1. 이미지 업로드</h2>
-              <p className="text-xs text-gray-400 mt-0.5">촬영된 전주번호찰 이미지를 드래그 앤 드롭하거나 선택하세요.</p>
-            </div>
-            <DropZone onImagesAdded={handleImagesAdded} />
+        {/* Upload */}
+        <div className="bg-white border border-gray-200 rounded-xl p-4">
+          <div className="mb-3">
+            <h2 className="font-bold text-gray-800 text-sm">이미지 업로드</h2>
+            <p className="text-xs text-gray-400 mt-0.5">촬영된 전주번호찰 이미지를 드래그 앤 드롭하거나 선택하세요. 업로드하면 바로 분석이 시작됩니다.</p>
           </div>
-
-          <div className="lg:col-span-7 bg-white border border-gray-200 rounded-xl p-4">
-            <div className="mb-3">
-              <h2 className="font-bold text-gray-800 text-sm">2. 샘플로 빠르게 테스트</h2>
-              <p className="text-xs text-gray-400 mt-0.5">직접 촬영한 이미지가 없다면 샘플 번호판으로 먼저 체험해보세요.</p>
-            </div>
-            <SampleSelector onSampleSelected={(image) => handleImagesAdded([image])} />
-          </div>
+          <DropZone onImagesAdded={handleImagesAdded} />
         </div>
 
         {/* Action bar */}
