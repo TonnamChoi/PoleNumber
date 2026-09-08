@@ -4,11 +4,12 @@ import PoleList from "./components/PoleList";
 import PoleDetail from "./components/PoleDetail";
 import SummaryTable from "./components/SummaryTable";
 import SettingsPanel from "./components/SettingsPanel";
+import AboutPlate from "./components/AboutPlate";
 import { PoleImage } from "./types";
 import { AppSettings, loadSettings, saveSettings } from "./lib/settings";
 import {
   Sparkles, ShieldCheck, Zap, Server,
-  Play, Trash2, Layers, Cpu, Loader2, Settings, ExternalLink
+  Play, Trash2, Layers, Cpu, Loader2, Settings, ExternalLink, Menu
 } from "lucide-react";
 
 export default function App() {
@@ -17,6 +18,8 @@ export default function App() {
   const [isBulkProcessing, setIsBulkProcessing] = useState(false);
   const [settings, setSettings] = useState<AppSettings>(() => loadSettings());
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [view, setView] = useState<"main" | "about">("main");
 
   const handleSaveSettings = (next: AppSettings) => {
     setSettings(next);
@@ -178,16 +181,7 @@ export default function App() {
           </div>
           <h1 className="text-sm font-bold text-gray-900">AI 전주번호찰 선로 정보 추출기</h1>
         </div>
-        <div className="flex items-center gap-1">
-          <a
-            href="https://online.kepco.co.kr/EWM090D00"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="hidden sm:flex items-center gap-1 px-3 py-1.5 text-xs font-semibold text-gray-500 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition-colors"
-          >
-            한전 전산화번호검색
-            <ExternalLink className="w-3.5 h-3.5" />
-          </a>
+        <div className="flex items-center gap-1 relative">
           <button
             onClick={() => setIsSettingsOpen(true)}
             className="p-2 text-gray-500 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition-colors"
@@ -195,12 +189,58 @@ export default function App() {
           >
             <Settings className="w-5 h-5" />
           </button>
+          <button
+            onClick={() => setIsMenuOpen((prev) => !prev)}
+            className="p-2 text-gray-500 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition-colors"
+            title="메뉴"
+          >
+            <Menu className="w-5 h-5" />
+          </button>
+
+          {isMenuOpen && (
+            <>
+              <div className="fixed inset-0 z-40" onClick={() => setIsMenuOpen(false)} />
+              <div className="absolute right-0 top-12 w-64 bg-white border border-gray-200 rounded-xl shadow-lg z-50 py-1.5">
+                <button
+                  onClick={() => {
+                    setView("main");
+                    setIsMenuOpen(false);
+                  }}
+                  className="w-full text-left px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 transition-colors"
+                >
+                  AI 전주번호찰 선로 정보 추출
+                </button>
+                <a
+                  href="https://online.kepco.co.kr/EWM090D00"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  onClick={() => setIsMenuOpen(false)}
+                  className="flex items-center justify-between px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 transition-colors"
+                >
+                  한전 전산화번호 검색
+                  <ExternalLink className="w-3.5 h-3.5 text-gray-400" />
+                </a>
+                <button
+                  onClick={() => {
+                    setView("about");
+                    setIsMenuOpen(false);
+                  }}
+                  className="w-full text-left px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 transition-colors"
+                >
+                  번호찰이란?
+                </button>
+              </div>
+            </>
+          )}
         </div>
       </header>
 
       {/* Main Workspace Layout */}
       <main className="flex-1 max-w-7xl w-full mx-auto p-4 md:p-6 space-y-5">
-
+        {view === "about" ? (
+          <AboutPlate />
+        ) : (
+        <>
         {/* Upload */}
         <div className="bg-white border border-gray-200 rounded-xl p-4">
           <div className="mb-3">
@@ -298,7 +338,13 @@ export default function App() {
             />
           </div>
         )}
+        </>
+        )}
       </main>
+
+      <footer className="py-4 text-center text-[11px] text-gray-400 shrink-0">
+        제작 : therianchoi@gmail.com
+      </footer>
 
       <SettingsPanel
         isOpen={isSettingsOpen}
