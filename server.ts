@@ -41,7 +41,14 @@ app.post("/api/extract", async (req, res) => {
   } catch (error: any) {
     console.error("Extraction Error:", error);
 
-    if (error.status === 401 || error.status === 403) {
+    const errorMessage = typeof error.message === "string" ? error.message : "";
+    const isAuthError =
+      error.status === 401 ||
+      error.status === 403 ||
+      errorMessage.includes("API_KEY_INVALID") ||
+      errorMessage.includes("API key not valid");
+
+    if (isAuthError) {
       return res.status(401).json({ error: "API 키가 올바르지 않습니다. 설정을 확인하세요." });
     }
     if (error.status === 429) {
