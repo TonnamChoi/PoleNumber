@@ -41,6 +41,20 @@ export async function extractWithClaude({
     throw new Error("Claude 응답이 비어 있습니다.");
   }
 
-  const jsonText = textBlock.text.trim().replace(/^```json\s*|```\s*$/g, "");
-  return JSON.parse(jsonText) as ExtractionResult;
+  const jsonText = textBlock.text.trim().replace(/^```(?:json)?\s*|```\s*$/g, "");
+
+  try {
+    return JSON.parse(jsonText) as ExtractionResult;
+  } catch {
+    const start = jsonText.indexOf("{");
+    const end = jsonText.lastIndexOf("}");
+    if (start !== -1 && end !== -1 && end > start) {
+      try {
+        return JSON.parse(jsonText.slice(start, end + 1)) as ExtractionResult;
+      } catch {
+        // fall through to the error below
+      }
+    }
+    throw new Error("Claude 응답을 해석할 수 없습니다.");
+  }
 }

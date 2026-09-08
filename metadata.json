@@ -1,6 +1,6 @@
 {
   "name": "전주번호찰 선로 정보 추출기",
-  "description": "전주번호찰 이미지들을 업로드하여 인공지능(Gemini) 분석을 통해 선로명과 선로번호를 자동으로 추출하고 표 형식으로 시각화 및 관리하는 도구입니다.",
+  "description": "전주번호찰 이미지들을 업로드하고 사용자가 직접 입력한 API 키로 여러 AI 제공업체 중 하나를 선택해 선로명과 선로번호를 자동으로 추출하고 표 형식으로 시각화 및 관리하는 도구입니다.",
   "requestFramePermissions": [],
-  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+  "majorCapabilities": []
 }

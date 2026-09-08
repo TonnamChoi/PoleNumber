@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { SAMPLE_PLATES } from "../data/samples";
 import { convertSvgToPngBase64, getNowString } from "../lib/utils";
 import { PoleImage } from "../types";
-import { Sparkles, Loader2, Play } from "lucide-react";
+import { Loader2, Play } from "lucide-react";
 
 interface SampleSelectorProps {
   onSampleSelected: (image: PoleImage) => void;
@@ -44,14 +44,6 @@ export default function SampleSelector({ onSampleSelected }: SampleSelectorProps
 
   return (
     <div className="w-full">
-      <div className="flex items-center gap-2 mb-3">
-        <Sparkles className="w-4 h-4 text-blue-600 animate-pulse" />
-        <h3 className="text-gray-800 font-extrabold text-xs uppercase tracking-wider">빠른 샘플 테스트</h3>
-        <span className="text-[10px] bg-blue-50 text-blue-700 border border-blue-100 px-2 py-0.5 rounded font-bold">
-          즉시 원클릭 체험 가능
-        </span>
-      </div>
-
       <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
         {SAMPLE_PLATES.map((plate) => {
           const isLoading = loadingId === plate.id;

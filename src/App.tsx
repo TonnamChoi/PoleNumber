@@ -161,6 +161,7 @@ export default function App() {
   const processingCount = poles.filter((p) => p.status === "processing").length;
   const failedCount = poles.filter((p) => p.status === "failed").length;
   const idleCount = poles.filter((p) => p.status === "idle").length;
+  const pendingCount = idleCount + failedCount;
 
   return (
     <div className="min-h-screen bg-gray-50 text-gray-900 flex flex-col font-sans">
@@ -232,9 +233,9 @@ export default function App() {
               </button>
               <button
                 onClick={handleAnalyzeAll}
-                disabled={isBulkProcessing || idleCount === 0}
+                disabled={isBulkProcessing || pendingCount === 0}
                 className={`px-4 py-1.5 text-xs font-semibold rounded-lg flex items-center gap-1.5 transition-colors ${
-                  idleCount === 0
+                  pendingCount === 0
                     ? "bg-gray-100 text-gray-400 cursor-not-allowed"
                     : "bg-blue-600 hover:bg-blue-700 text-white"
                 }`}
@@ -247,7 +248,7 @@ export default function App() {
                 ) : (
                   <>
                     <Play className="w-3.5 h-3.5 fill-current" />
-                    대기중 {idleCount}건 일괄 분석
+                    대기중 {pendingCount}건 일괄 분석
                   </>
                 )}
               </button>
