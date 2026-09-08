@@ -79,7 +79,7 @@ export default function SummaryTable({ poles, selectedId, onSelect, onRemove, on
         <div className="flex items-center gap-2">
           <h3 className="font-extrabold text-gray-700 text-xs uppercase tracking-wider">추출 결과 종합 데이터 테이블</h3>
           <span className="text-[11px] bg-blue-100 text-blue-700 font-extrabold px-2 py-0.5 rounded font-mono">
-            {poles.length} Records Loaded
+            {poles.length}건 로드됨
           </span>
         </div>
 
@@ -144,13 +144,13 @@ export default function SummaryTable({ poles, selectedId, onSelect, onRemove, on
         <table className="w-full text-left border-collapse">
           <thead>
             <tr className="bg-gray-50 border-b border-gray-200 text-gray-500 font-bold text-[10px] uppercase tracking-wider">
-              <th className="py-2 px-3 text-center w-12 border-r border-gray-200">No.</th>
+              <th className="py-2 px-3 text-center w-12 border-r border-gray-200">번호</th>
               <th className="py-2 px-3 w-14 text-center border-r border-gray-200">미리보기</th>
-              <th className="py-2 px-3 border-r border-gray-200">파일명 (Image Source)</th>
-              <th className="py-2 px-3 border-r border-gray-200">선로명 (Line Name)</th>
-              <th className="py-2 px-3 border-r border-gray-200">전산화번호 (Grid ID)</th>
-              <th className="py-2 px-3 border-r border-gray-200">선로번호 (Line No.)</th>
-              <th className="py-2 px-3 text-center border-r border-gray-200 w-24">정확도 (Conf.)</th>
+              <th className="py-2 px-3 border-r border-gray-200">파일명</th>
+              <th className="py-2 px-3 border-r border-gray-200">선로명</th>
+              <th className="py-2 px-3 border-r border-gray-200">전산화번호</th>
+              <th className="py-2 px-3 border-r border-gray-200">선로번호</th>
+              <th className="py-2 px-3 text-center border-r border-gray-200 w-24">정확도</th>
               <th className="py-2 px-3 border-r border-gray-200">기타 세부 정보</th>
               <th className="py-2 px-3 text-center border-r border-gray-200 w-24">판독 상태</th>
               <th className="py-2 px-3 text-center w-16">작업</th>
@@ -247,23 +247,23 @@ export default function SummaryTable({ poles, selectedId, onSelect, onRemove, on
                     </td>
                     <td className="py-2 px-3 text-center border-r border-gray-100">
                       {pole.status === "completed" && (
-                        <span className="inline-block text-[10px] bg-green-50 text-green-700 rounded px-1.5 py-0.5 font-extrabold uppercase tracking-wider">
-                          EXTRACTED
+                        <span className="inline-block text-[10px] bg-green-50 text-green-700 rounded px-1.5 py-0.5 font-extrabold tracking-wider">
+                          추출완료
                         </span>
                       )}
                       {pole.status === "failed" && (
-                        <span className="inline-block text-[10px] bg-red-50 text-red-700 rounded px-1.5 py-0.5 font-extrabold uppercase tracking-wider">
-                          FAILED
+                        <span className="inline-block text-[10px] bg-red-50 text-red-700 rounded px-1.5 py-0.5 font-extrabold tracking-wider">
+                          실패
                         </span>
                       )}
                       {pole.status === "processing" && (
-                        <span className="inline-block text-[10px] bg-blue-50 text-blue-700 rounded px-1.5 py-0.5 font-extrabold uppercase tracking-wider animate-pulse">
-                          ANALYZING
+                        <span className="inline-block text-[10px] bg-blue-50 text-blue-700 rounded px-1.5 py-0.5 font-extrabold tracking-wider animate-pulse">
+                          분석중
                         </span>
                       )}
                       {pole.status === "idle" && (
-                        <span className="inline-block text-[10px] bg-gray-100 text-gray-500 rounded px-1.5 py-0.5 font-bold uppercase tracking-wider">
-                          PENDING
+                        <span className="inline-block text-[10px] bg-gray-100 text-gray-500 rounded px-1.5 py-0.5 font-bold tracking-wider">
+                          대기중
                         </span>
                       )}
                     </td>

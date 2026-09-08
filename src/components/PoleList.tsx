@@ -79,7 +79,7 @@ export default function PoleList({ poles, selectedId, onSelect, onRemove, onAnal
                   />
                   {pole.isSample && (
                     <span className="absolute top-0 left-0 bg-blue-600 text-white text-[7px] px-1 rounded-br font-bold uppercase tracking-wider scale-95 origin-top-left">
-                      Sample
+                      샘플
                     </span>
                   )}
                 </div>

@@ -31,7 +31,7 @@ export default function PoleDetail({ pole, onAnalyze, onUpdateInfo }: PoleDetail
 
   if (!pole) {
     return (
-      <div className="bg-white border border-gray-200 rounded-lg h-[520px] flex flex-col items-center justify-center p-8 text-center text-gray-400">
+      <div className="bg-white border border-gray-200 rounded-lg flex flex-col items-center justify-center p-8 text-center text-gray-400">
         <MapPin className="w-10 h-10 mb-2 stroke-1 text-gray-300" />
         <h4 className="font-extrabold text-gray-700 text-xs uppercase tracking-wider mb-1">상세 정보 패널</h4>
         <p className="text-[11px] text-gray-400 max-w-[280px] leading-relaxed">
@@ -67,7 +67,7 @@ export default function PoleDetail({ pole, onAnalyze, onUpdateInfo }: PoleDetail
   };
 
   return (
-    <div className="bg-white border border-gray-200 rounded-lg overflow-hidden flex flex-col h-[520px]">
+    <div className="bg-white border border-gray-200 rounded-lg overflow-hidden flex flex-col">
       {/* Title Header */}
       <div className="p-3 border-b border-gray-200 bg-gray-50 flex justify-between items-center shrink-0">
         <div className="min-w-0">
@@ -84,8 +84,8 @@ export default function PoleDetail({ pole, onAnalyze, onUpdateInfo }: PoleDetail
       </div>
 
       {/* Main Split Layout: Left Image, Right Text */}
-      <div className="flex-1 overflow-y-auto p-4">
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 h-full">
+      <div className="p-4">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-4">
           
           {/* LEFT SIDE: Image Preview */}
           <div className="lg:col-span-5 flex flex-col items-center justify-center bg-gray-50 rounded p-2.5 border border-gray-200 relative group h-48 lg:h-auto min-h-[200px]">
@@ -96,12 +96,12 @@ export default function PoleDetail({ pole, onAnalyze, onUpdateInfo }: PoleDetail
               referrerPolicy="no-referrer"
             />
             <div className="absolute bottom-2 left-2 bg-black/75 text-[9px] font-semibold text-white px-1.5 py-0.5 rounded uppercase tracking-wider">
-              PLATE PREVIEW
+번호판 미리보기
             </div>
           </div>
 
           {/* RIGHT SIDE: Extraction Form / Status */}
-          <div className="lg:col-span-7 flex flex-col justify-between h-full">
+          <div className="lg:col-span-7 flex flex-col justify-between">
             {/* Status: IDLE */}
             {pole.status === "idle" && (
               <div className="flex-1 flex flex-col items-center justify-center text-center p-4">
@@ -160,7 +160,7 @@ export default function PoleDetail({ pole, onAnalyze, onUpdateInfo }: PoleDetail
                   <div className="flex items-center justify-between bg-gray-50 p-2 rounded border border-gray-200">
                     <div className="flex items-center gap-1.5 text-[11px] text-gray-500 font-bold uppercase tracking-wider">
                       <Zap className="w-3.5 h-3.5 text-blue-600" />
-                      AI CONFIDENCE INDEX
+                      AI 신뢰도 지수
                     </div>
                     <div className="flex items-center gap-2">
                       <div className="w-20 bg-gray-200 rounded-full h-1.5 overflow-hidden">
@@ -170,53 +170,53 @@ export default function PoleDetail({ pole, onAnalyze, onUpdateInfo }: PoleDetail
                         />
                       </div>
                       <span className={`text-[10px] font-extrabold border px-1.5 py-0.2 rounded ${getConfidenceBg(pole.confidence)}`}>
-                        {pole.confidence ? `${pole.confidence}%` : "N/A"}
+                        {pole.confidence ? `${pole.confidence}%` : "-"}
                       </span>
                     </div>
                   </div>
 
                   {/* Form fields */}
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
-                    <div className="space-y-1">
-                      <label className="text-[11px] font-extrabold text-gray-500 block uppercase tracking-wider">선로명 (Line Name)</label>
+                    <div className="flex items-center gap-2">
+                      <label className="text-[11px] font-normal text-gray-500 shrink-0 whitespace-nowrap w-16">선로명</label>
                       <input
                         type="text"
                         value={lineName}
                         onChange={(e) => setLineName(e.target.value)}
                         placeholder="예: 신안선, 덕적선"
-                        className="w-full text-xs font-bold bg-white border border-gray-300 hover:border-gray-400 focus:border-blue-500 focus:ring-1 focus:ring-blue-100 outline-none p-2 rounded transition-all"
+                        className="w-full min-w-0 text-xs font-mono font-bold text-blue-700 bg-white border border-gray-300 hover:border-gray-400 focus:border-blue-500 focus:ring-1 focus:ring-blue-100 outline-none p-2 rounded transition-all"
                       />
                     </div>
-                    <div className="space-y-1">
-                      <label className="text-[11px] font-extrabold text-gray-500 block uppercase tracking-wider">전산화번호 (Grid ID)</label>
+                    <div className="flex items-center gap-2">
+                      <label className="text-[11px] font-normal text-gray-500 shrink-0 whitespace-nowrap w-16">전산화번호</label>
                       <input
                         type="text"
                         value={computerizedNumber}
                         onChange={(e) => setComputerizedNumber(e.target.value)}
                         placeholder="예: 9281L321"
-                        className="w-full text-xs font-bold font-mono bg-white border border-gray-300 hover:border-gray-400 focus:border-blue-500 focus:ring-1 focus:ring-blue-100 outline-none p-2 rounded transition-all"
+                        className="w-full min-w-0 text-xs font-mono font-bold text-blue-700 bg-white border border-gray-300 hover:border-gray-400 focus:border-blue-500 focus:ring-1 focus:ring-blue-100 outline-none p-2 rounded transition-all"
                       />
                     </div>
-                    <div className="space-y-1">
-                      <label className="text-[11px] font-extrabold text-gray-500 block uppercase tracking-wider">선로번호 (Line No.)</label>
+                    <div className="flex items-center gap-2">
+                      <label className="text-[11px] font-normal text-gray-500 shrink-0 whitespace-nowrap w-16">선로번호</label>
                       <input
                         type="text"
                         value={lineNumber}
                         onChange={(e) => setLineNumber(e.target.value)}
                         placeholder="예: 12, 15L2, 42-1"
-                        className="w-full text-xs font-bold font-mono bg-white border border-gray-300 hover:border-gray-400 focus:border-blue-500 focus:ring-1 focus:ring-blue-100 outline-none p-2 rounded transition-all"
+                        className="w-full min-w-0 text-xs font-mono font-bold text-blue-700 bg-white border border-gray-300 hover:border-gray-400 focus:border-blue-500 focus:ring-1 focus:ring-blue-100 outline-none p-2 rounded transition-all"
                       />
                     </div>
                   </div>
 
                   <div className="space-y-1">
-                    <label className="text-[11px] font-extrabold text-gray-500 block uppercase tracking-wider">기타 정보 및 좌표 (Extra Details)</label>
+                    <label className="text-[11px] font-normal text-gray-500 block uppercase tracking-wider">기타 정보 및 좌표</label>
                     <input
                       type="text"
                       value={extraInfo}
                       onChange={(e) => setExtraInfo(e.target.value)}
                       placeholder="예: 22.9kV, 제작년도, 좌표 등"
-                      className="w-full text-xs bg-white border border-gray-300 hover:border-gray-400 focus:border-blue-500 focus:ring-1 focus:ring-blue-100 outline-none p-2 rounded transition-all"
+                      className="w-full text-xs font-mono font-bold text-blue-700 bg-white border border-gray-300 hover:border-gray-400 focus:border-blue-500 focus:ring-1 focus:ring-blue-100 outline-none p-2 rounded transition-all"
                     />
                   </div>
 
@@ -224,7 +224,7 @@ export default function PoleDetail({ pole, onAnalyze, onUpdateInfo }: PoleDetail
                     <div className="bg-blue-50/40 border border-blue-100 rounded p-2.5 space-y-1">
                       <h5 className="text-[9px] font-extrabold text-blue-800 flex items-center gap-1 uppercase tracking-wider">
                         <Sparkles className="w-3 h-3" />
-                        AI REGION ANALYSIS LOG
+                        AI 분석 근거
                       </h5>
                       <p className="text-[11px] text-gray-600 leading-normal font-medium">
                         {pole.reasoning}
