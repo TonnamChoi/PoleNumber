@@ -4,16 +4,25 @@ import SampleSelector from "./components/SampleSelector";
 import PoleList from "./components/PoleList";
 import PoleDetail from "./components/PoleDetail";
 import SummaryTable from "./components/SummaryTable";
+import SettingsPanel from "./components/SettingsPanel";
 import { PoleImage } from "./types";
-import { 
-  Sparkles, ShieldCheck, Zap, Server, 
-  Play, Trash2, Layers, Cpu, Loader2
+import { AppSettings, loadSettings, saveSettings } from "./lib/settings";
+import {
+  Sparkles, ShieldCheck, Zap, Server,
+  Play, Trash2, Layers, Cpu, Loader2, Settings
 } from "lucide-react";
 
 export default function App() {
   const [poles, setPoles] = useState<PoleImage[]>([]);
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [isBulkProcessing, setIsBulkProcessing] = useState(false);
+  const [settings, setSettings] = useState<AppSettings>(() => loadSettings());
+  const [isSettingsOpen, setIsSettingsOpen] = useState(false);
+
+  const handleSaveSettings = (next: AppSettings) => {
+    setSettings(next);
+    saveSettings(next);
+  };
 
   // Add uploaded or sample pole images
   const handleImagesAdded = (newImages: PoleImage[]) => {
@@ -53,6 +62,19 @@ export default function App() {
     const targetPole = poles.find((p) => p.id === id);
     if (!targetPole) return;
 
+    const apiKey = settings.keys[settings.selectedProvider];
+    if (!apiKey) {
+      setPoles((prev) =>
+        prev.map((p) =>
+          p.id === id
+            ? { ...p, status: "failed", error: "설정에서 API 키를 먼저 입력하세요." }
+            : p
+        )
+      );
+      setIsSettingsOpen(true);
+      return;
+    }
+
     // Set processing state
     setPoles((prev) =>
       prev.map((p) =>
@@ -69,6 +91,8 @@ export default function App() {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
+          provider: settings.selectedProvider,
+          apiKey,
           image: targetPole.url,
           mimeType: targetPole.mimeType,
         }),
@@ -156,6 +180,13 @@ export default function App() {
             <p className="text-[10px] text-gray-400 font-medium">전주번호찰 선로 정보 추출 및 검증 통합 관리 플랫폼</p>
           </div>
         </div>
+        <button
+          onClick={() => setIsSettingsOpen(true)}
+          className="p-2 text-gray-300 hover:text-white hover:bg-gray-800 rounded-lg transition-colors"
+          title="AI 설정"
+        >
+          <Settings className="w-5 h-5" />
+        </button>
         <div className="flex items-center gap-6 text-xs font-semibold opacity-90">
           <div className="hidden md:flex items-center gap-2">
             <span className="w-2.5 h-2.5 rounded-full bg-green-400 animate-pulse"></span>
@@ -333,6 +364,13 @@ export default function App() {
           COPYRIGHT © 2026 KEPCO ASSET MANAGEMENT SYSTEM
         </div>
       </footer>
+
+      <SettingsPanel
+        isOpen={isSettingsOpen}
+        settings={settings}
+        onSave={handleSaveSettings}
+        onClose={() => setIsSettingsOpen(false)}
+      />
     </div>
   );
 }
