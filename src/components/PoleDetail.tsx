@@ -92,7 +92,7 @@ export default function PoleDetail({ pole, onAnalyze, onUpdateInfo }: PoleDetail
             <img
               src={pole.url}
               alt={pole.name}
-              className="max-w-full max-h-full object-contain rounded border border-gray-200 shadow-2xs bg-white relative transition-transform duration-300 ease-out cursor-zoom-in group-hover:scale-150 group-hover:z-20 group-hover:shadow-lg"
+              className="max-w-full max-h-full object-contain rounded border border-gray-200 shadow-2xs bg-white relative transition-transform duration-300 ease-out cursor-zoom-in group-hover:scale-200 group-hover:z-20 group-hover:shadow-lg"
               referrerPolicy="no-referrer"
             />
             <div className="absolute bottom-2 left-2 bg-black/75 text-[9px] font-semibold text-white px-1.5 py-0.5 rounded uppercase tracking-wider">
