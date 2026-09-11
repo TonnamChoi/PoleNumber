@@ -37,6 +37,17 @@ export async function extractWithOpenAI({
             confidence: { type: "integer" },
             extraInfo: { type: ["string", "null"] },
             reasoning: { type: ["string", "null"] },
+            boundingBox: {
+              type: ["object", "null"],
+              properties: {
+                x: { type: "number" },
+                y: { type: "number" },
+                width: { type: "number" },
+                height: { type: "number" },
+              },
+              required: ["x", "y", "width", "height"],
+              additionalProperties: false,
+            },
           },
           required: [
             "lineName",
@@ -45,6 +56,7 @@ export async function extractWithOpenAI({
             "confidence",
             "extraInfo",
             "reasoning",
+            "boundingBox",
           ],
           additionalProperties: false,
         },

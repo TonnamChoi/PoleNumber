@@ -1,11 +1,35 @@
 import { extract } from "./index";
-import type { Provider } from "./types";
+import type { BoundingBox, ExtractionResult, Provider } from "./types";
 
 const VALID_PROVIDERS: Provider[] = ["gemini", "claude", "openai"];
 
 export interface ExtractRequestResult {
   status: number;
   body: unknown;
+}
+
+// Some providers omit boundingBox entirely or return malformed values; normalize to a
+// valid box within [0,1] or null so the client can safely crop without extra checks.
+function normalizeBoundingBox(box: unknown): BoundingBox | null {
+  if (!box || typeof box !== "object") return null;
+  const { x, y, width, height } = box as Record<string, unknown>;
+  if (
+    typeof x !== "number" || typeof y !== "number" ||
+    typeof width !== "number" || typeof height !== "number" ||
+    !Number.isFinite(x) || !Number.isFinite(y) ||
+    !Number.isFinite(width) || !Number.isFinite(height) ||
+    width <= 0 || height <= 0
+  ) {
+    return null;
+  }
+  const clampedX = Math.min(Math.max(x, 0), 1);
+  const clampedY = Math.min(Math.max(y, 0), 1);
+  return {
+    x: clampedX,
+    y: clampedY,
+    width: Math.min(Math.max(width, 0), 1 - clampedX),
+    height: Math.min(Math.max(height, 0), 1 - clampedY),
+  };
 }
 
 export async function handleExtractRequest(body: any): Promise<ExtractRequestResult> {
@@ -30,7 +54,12 @@ export async function handleExtractRequest(body: any): Promise<ExtractRequestRes
       mimeType: mimeType || "image/jpeg",
     });
 
-    return { status: 200, body: result };
+    const body: ExtractionResult = {
+      ...result,
+      boundingBox: normalizeBoundingBox(result.boundingBox),
+    };
+
+    return { status: 200, body };
   } catch (error: any) {
     console.error("Extraction Error:", error);
 
@@ -46,6 +75,16 @@ export async function handleExtractRequest(body: any): Promise<ExtractRequestRes
     }
     if (error.status === 429) {
       return { status: 429, body: { error: "요청 한도를 초과했습니다. 잠시 후 다시 시도하세요." } };
+    }
+
+    const isOverloadedError =
+      error.status === 503 ||
+      errorMessage.includes("UNAVAILABLE") ||
+      errorMessage.includes("overloaded") ||
+      errorMessage.includes("high demand");
+
+    if (isOverloadedError) {
+      return { status: 503, body: { error: "AI 서버가 일시적으로 요청 폭주 상태입니다. 잠시 후 다시 시도하세요." } };
     }
 
     return { status: 500, body: { error: error.message || "분석 중 오류가 발생했습니다." } };

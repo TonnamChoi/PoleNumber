@@ -32,8 +32,20 @@ export async function extractWithGemini({
           confidence: { type: Type.INTEGER, description: "추출 정확도 신뢰도 점수 (0~100)" },
           extraInfo: { type: Type.STRING, description: "기타 정보, 없으면 null" },
           reasoning: { type: Type.STRING, description: "확인한 근거를 한국어로 간단히 설명" },
+          boundingBox: {
+            type: Type.OBJECT,
+            description: "번호판이 이미지에서 차지하는 영역 (0~1 비율), 찾지 못한 경우 null",
+            nullable: true,
+            properties: {
+              x: { type: Type.NUMBER },
+              y: { type: Type.NUMBER },
+              width: { type: Type.NUMBER },
+              height: { type: Type.NUMBER },
+            },
+            required: ["x", "y", "width", "height"],
+          },
         },
-        required: ["lineName", "computerizedNumber", "lineNumber", "confidence"],
+        required: ["lineName", "computerizedNumber", "lineNumber", "confidence", "boundingBox"],
       },
     },
   });

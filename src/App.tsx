@@ -119,6 +119,7 @@ export default function App() {
                 confidence: data.confidence,
                 extraInfo: data.extraInfo,
                 reasoning: data.reasoning,
+                boundingBox: data.boundingBox ?? null,
               }
             : p
         )

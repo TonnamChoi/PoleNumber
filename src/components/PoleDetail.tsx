@@ -17,6 +17,7 @@ export default function PoleDetail({ pole, onAnalyze, onUpdateInfo }: PoleDetail
   const [lineNumber, setLineNumber] = useState("");
   const [extraInfo, setExtraInfo] = useState("");
   const [isSaved, setIsSaved] = useState(false);
+  const [croppedUrl, setCroppedUrl] = useState<string | null>(null);
 
   // Sync state when selected pole changes or updates
   useEffect(() => {
@@ -28,6 +29,50 @@ export default function PoleDetail({ pole, onAnalyze, onUpdateInfo }: PoleDetail
       setIsSaved(false);
     }
   }, [pole?.id, pole?.lineName, pole?.computerizedNumber, pole?.lineNumber, pole?.extraInfo]);
+
+  // Crop the uploaded photo down to just the plate region using the AI-detected bounding box
+  useEffect(() => {
+    const box = pole?.boundingBox;
+    if (!pole || !box) {
+      setCroppedUrl(null);
+      return;
+    }
+
+    let cancelled = false;
+    const img = new Image();
+    img.onload = () => {
+      if (cancelled) return;
+      const naturalWidth = img.naturalWidth;
+      const naturalHeight = img.naturalHeight;
+
+      // Pad the detected box slightly so the crop isn't flush against the plate's edge
+      const padX = box.width * 0.06;
+      const padY = box.height * 0.06;
+      const x = Math.max(0, box.x - padX / 2);
+      const y = Math.max(0, box.y - padY / 2);
+      const width = Math.min(box.width + padX, 1 - x);
+      const height = Math.min(box.height + padY, 1 - y);
+
+      const sx = x * naturalWidth;
+      const sy = y * naturalHeight;
+      const sw = width * naturalWidth;
+      const sh = height * naturalHeight;
+      if (sw <= 0 || sh <= 0) return;
+
+      const canvas = document.createElement("canvas");
+      canvas.width = sw;
+      canvas.height = sh;
+      const ctx = canvas.getContext("2d");
+      if (!ctx) return;
+      ctx.drawImage(img, sx, sy, sw, sh, 0, 0, sw, sh);
+      setCroppedUrl(canvas.toDataURL("image/jpeg", 0.92));
+    };
+    img.src = pole.url;
+
+    return () => {
+      cancelled = true;
+    };
+  }, [pole?.id, pole?.url, pole?.boundingBox?.x, pole?.boundingBox?.y, pole?.boundingBox?.width, pole?.boundingBox?.height]);
 
   if (!pole) {
     return (
@@ -51,6 +96,19 @@ export default function PoleDetail({ pole, onAnalyze, onUpdateInfo }: PoleDetail
     setIsSaved(true);
     setTimeout(() => setIsSaved(false), 2000);
   };
+
+  // AI가 값을 찾지 못했을 때 (빈 문자열 또는 문자열 그대로의 "null") 강조 표시할지 판단
+  const isMissingValue = (value: string) => {
+    const trimmed = value.trim().toLowerCase();
+    return trimmed === "" || trimmed === "null";
+  };
+
+  const inputClassName = (value: string) =>
+    `w-full min-w-0 text-xs font-mono font-bold outline-none p-2 rounded transition-all border ${
+      isMissingValue(value)
+        ? "bg-yellow-200 border-yellow-400 text-[crimson] focus:border-yellow-500 focus:ring-1 focus:ring-yellow-100"
+        : "text-blue-700 bg-white border-gray-300 hover:border-gray-400 focus:border-blue-500 focus:ring-1 focus:ring-blue-100"
+    }`;
 
   const getConfidenceColor = (score: number | null) => {
     if (!score) return "bg-gray-200";
@@ -90,7 +148,7 @@ export default function PoleDetail({ pole, onAnalyze, onUpdateInfo }: PoleDetail
           {/* LEFT SIDE: Image Preview */}
           <div className="lg:col-span-5 flex flex-col items-center justify-center bg-gray-50 rounded p-2.5 border border-gray-200 relative group h-48 lg:h-auto min-h-[200px]">
             <img
-              src={pole.url}
+              src={croppedUrl || pole.url}
               alt={pole.name}
               className="max-w-full max-h-full object-contain rounded border border-gray-200 shadow-2xs bg-white relative transition-transform duration-300 ease-out cursor-zoom-in group-hover:scale-200 group-hover:z-20 group-hover:shadow-lg"
               referrerPolicy="no-referrer"
@@ -184,7 +242,7 @@ export default function PoleDetail({ pole, onAnalyze, onUpdateInfo }: PoleDetail
                         value={lineName}
                         onChange={(e) => setLineName(e.target.value)}
                         placeholder="예: 신안선, 덕적선"
-                        className="w-full min-w-0 text-xs font-mono font-bold text-blue-700 bg-white border border-gray-300 hover:border-gray-400 focus:border-blue-500 focus:ring-1 focus:ring-blue-100 outline-none p-2 rounded transition-all"
+                        className={inputClassName(lineName)}
                       />
                     </div>
                     <div className="flex items-center gap-2">
@@ -194,7 +252,7 @@ export default function PoleDetail({ pole, onAnalyze, onUpdateInfo }: PoleDetail
                         value={computerizedNumber}
                         onChange={(e) => setComputerizedNumber(e.target.value)}
                         placeholder="예: 9281L321"
-                        className="w-full min-w-0 text-xs font-mono font-bold text-blue-700 bg-white border border-gray-300 hover:border-gray-400 focus:border-blue-500 focus:ring-1 focus:ring-blue-100 outline-none p-2 rounded transition-all"
+                        className={inputClassName(computerizedNumber)}
                       />
                     </div>
                     <div className="flex items-center gap-2">
@@ -204,7 +262,7 @@ export default function PoleDetail({ pole, onAnalyze, onUpdateInfo }: PoleDetail
                         value={lineNumber}
                         onChange={(e) => setLineNumber(e.target.value)}
                         placeholder="예: 12, 15L2, 42-1"
-                        className="w-full min-w-0 text-xs font-mono font-bold text-blue-700 bg-white border border-gray-300 hover:border-gray-400 focus:border-blue-500 focus:ring-1 focus:ring-blue-100 outline-none p-2 rounded transition-all"
+                        className={inputClassName(lineNumber)}
                       />
                     </div>
                   </div>
@@ -216,7 +274,7 @@ export default function PoleDetail({ pole, onAnalyze, onUpdateInfo }: PoleDetail
                       value={extraInfo}
                       onChange={(e) => setExtraInfo(e.target.value)}
                       placeholder="예: 22.9kV, 제작년도, 좌표 등"
-                      className="w-full text-xs font-mono font-bold text-blue-700 bg-white border border-gray-300 hover:border-gray-400 focus:border-blue-500 focus:ring-1 focus:ring-blue-100 outline-none p-2 rounded transition-all"
+                      className={inputClassName(extraInfo)}
                     />
                   </div>
 

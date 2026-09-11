@@ -49,6 +49,7 @@ export default function DropZone({ onImagesAdded, previewImage }: DropZoneProps)
             confidence: null,
             extraInfo: null,
             reasoning: null,
+            boundingBox: null,
             isSample: false,
             uploadedAt: new Date().toLocaleTimeString("ko-KR", {
               hour: "2-digit",

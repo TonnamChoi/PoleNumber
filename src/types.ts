@@ -1,3 +1,10 @@
+export interface BoundingBox {
+  x: number;
+  y: number;
+  width: number;
+  height: number;
+}
+
 export interface ExtractedInfo {
   lineName: string | null;
   computerizedNumber: string | null;
@@ -5,6 +12,7 @@ export interface ExtractedInfo {
   confidence: number | null;
   extraInfo: string | null;
   reasoning: string | null;
+  boundingBox: BoundingBox | null;
 }
 
 export interface PoleImage {
@@ -20,6 +28,7 @@ export interface PoleImage {
   confidence: number | null;
   extraInfo: string | null;
   reasoning: string | null;
+  boundingBox: BoundingBox | null;
   isSample: boolean;
   uploadedAt: string;
 }
