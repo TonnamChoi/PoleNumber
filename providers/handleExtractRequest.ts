@@ -1,5 +1,5 @@
-import { extract } from "./index";
-import type { BoundingBox, ExtractionResult, Provider } from "./types";
+import { extract } from "./index.js";
+import type { BoundingBox, ExtractionResult, Provider } from "./types.js";
 
 const VALID_PROVIDERS: Provider[] = ["gemini", "claude", "openai"];
 

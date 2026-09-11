@@ -1,6 +1,6 @@
 import Anthropic from "@anthropic-ai/sdk";
-import { ExtractionResult, ExtractParams } from "./types";
-import { EXTRACTION_INSTRUCTION } from "./prompt";
+import { ExtractionResult, ExtractParams } from "./types.js";
+import { EXTRACTION_INSTRUCTION } from "./prompt.js";
 
 export async function extractWithClaude({
   apiKey,

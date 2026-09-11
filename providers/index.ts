@@ -1,7 +1,7 @@
-import { Provider, ExtractionResult, ExtractParams } from "./types";
-import { extractWithGemini } from "./gemini";
-import { extractWithClaude } from "./claude";
-import { extractWithOpenAI } from "./openai";
+import { Provider, ExtractionResult, ExtractParams } from "./types.js";
+import { extractWithGemini } from "./gemini.js";
+import { extractWithClaude } from "./claude.js";
+import { extractWithOpenAI } from "./openai.js";
 
 export async function extract(
   provider: Provider,
